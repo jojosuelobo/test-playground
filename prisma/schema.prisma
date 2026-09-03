@@ -30,6 +30,8 @@ model User {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   enrollments       Enrollment[]
+  comments          Comment[]
+  ratings           Rating[]
 }
 
 model Course {
@@ -41,6 +43,8 @@ model Course {
   imageUrl    String?
   modules     Module[]
   enrollments Enrollment[]
+  comments    Comment[]
+  ratings     Rating[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
@@ -66,6 +70,29 @@ model Enrollment {
   status      EnrollmentStatus @default(ENROLLED)
   enrolledAt  DateTime         @default(now())
   completedAt DateTime?
+
+  @@unique([userId, courseId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, courseId])
 }

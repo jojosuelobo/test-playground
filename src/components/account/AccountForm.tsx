@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 
@@ -141,6 +142,13 @@ export default function AccountForm() {
             {account.name}
           </p>
           <p className="text-sm text-gray-500">{account.email}</p>
+          <Link
+            href={`/u/${account.id}`}
+            data-testid="account-public-profile-link"
+            className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:underline"
+          >
+            Ver perfil público
+          </Link>
         </div>
       </aside>
 

@@ -37,12 +37,9 @@ export default function Navbar() {
               <Link
                 href="/account"
                 data-testid="nav-account-link"
-                className="hidden items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 sm:flex"
+                className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-                <span data-testid="nav-user-name">{user.name}</span>
+                Minha conta
               </Link>
               <Button
                 variant="secondary"

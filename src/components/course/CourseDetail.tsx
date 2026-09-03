@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Badge from "@/components/ui/Badge";
+import Tabs from "@/components/ui/Tabs";
 import EnrollButton from "@/components/course/EnrollButton";
+import CourseComments from "@/components/course/CourseComments";
+import CourseRatings from "@/components/course/CourseRatings";
 import { getCourseVisual } from "@/lib/courseVisuals";
 
 type Module = {
@@ -23,9 +26,18 @@ type CourseDetailData = {
   enrollment: { id: string; status: "ENROLLED" | "COMPLETED" } | null;
 };
 
+type TabId = "modules" | "ratings" | "comments";
+
+const tabs: { id: TabId; label: string; testId: string }[] = [
+  { id: "modules", label: "Módulos", testId: "course-tab-modules" },
+  { id: "ratings", label: "Avaliações", testId: "course-tab-ratings" },
+  { id: "comments", label: "Comentários", testId: "course-tab-comments" },
+];
+
 export default function CourseDetail({ courseId }: { courseId: string }) {
   const [data, setData] = useState<CourseDetailData | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabId>("modules");
 
   useEffect(() => {
     let cancelled = false;
@@ -80,30 +92,39 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       >
         {course.title}
       </h1>
-      <p data-testid="course-detail-description" className="mb-8 text-gray-600">
+      <p data-testid="course-detail-description" className="mb-6 text-gray-600">
         {course.description}
       </p>
 
-      <h2 className="mb-3 text-lg font-semibold text-gray-900">Módulos</h2>
-      <ul data-testid="course-module-list" className="mb-8 space-y-2">
-        {course.modules.map((module) => (
-          <li
-            key={module.id}
-            data-testid={`course-module-item-${module.order}`}
-            className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"
-          >
-            <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
-              {module.order}
-            </span>
-            {module.title}
-          </li>
-        ))}
-      </ul>
+      <div className="mb-8">
+        <EnrollButton
+          courseId={course.id}
+          initialStatus={enrollment?.status ?? null}
+        />
+      </div>
 
-      <EnrollButton
-        courseId={course.id}
-        initialStatus={enrollment?.status ?? null}
-      />
+      <Tabs tabs={tabs} activeTab={activeTab} onChange={(id) => setActiveTab(id as TabId)} />
+
+      {activeTab === "modules" && (
+        <ul data-testid="course-module-list" className="space-y-2">
+          {course.modules.map((module) => (
+            <li
+              key={module.id}
+              data-testid={`course-module-item-${module.order}`}
+              className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"
+            >
+              <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                {module.order}
+              </span>
+              {module.title}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {activeTab === "ratings" && <CourseRatings courseId={course.id} />}
+
+      {activeTab === "comments" && <CourseComments courseId={course.id} />}
     </div>
   );
 }
