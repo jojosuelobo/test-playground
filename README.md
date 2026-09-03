@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodePlayground
 
-## Getting Started
+Site de cursos usado como playground para prática de automação de testes (UI e API). Construído com Next.js (App Router), PostgreSQL e Prisma. Todo elemento interativo tem um atributo `data-testid`.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js 16 (App Router, TypeScript)
+- PostgreSQL via Docker Compose
+- Prisma ORM
+- Autenticação própria: bcrypt + sessão JWT em cookie httpOnly
+- Tailwind CSS
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Como rodar localmente
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Suba o banco de dados:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   docker compose up -d
+   ```
 
-## Learn More
+2. Instale as dependências:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Aplique as migrations e popule o banco:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   npx prisma migrate dev
+   npx prisma db seed
+   ```
 
-## Deploy on Vercel
+4. Rode o servidor de desenvolvimento:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Acesse [http://localhost:3000](http://localhost:3000).
+
+Um usuário de demonstração é criado pelo seed: `demo@example.com` / `Password123!`.
+
+> O container Postgres expõe a porta **5433** (não 5432) para não conflitar com uma instância local já em uso. Ajuste `docker-compose.yml`/`.env` se preferir outra porta.
+
+## Fluxo da aplicação
+
+Home (Log In / Sign Up) → Dashboard (View Marketplace) → Marketplace → Detalhe do curso (Inscrever-se) → Dashboard (módulos com vídeo + Concluir Curso) → Certificado.
+
+## API
+
+Todas as rotas de dados são endpoints HTTP reais em `src/app/api/*`, pensadas para serem exercitadas tanto pela UI quanto diretamente (curl/Postman/Playwright API testing):
+
+| Rota | Método | Auth |
+|---|---|---|
+| `/api/auth/signup` | POST | - |
+| `/api/auth/login` | POST | - |
+| `/api/auth/logout` | POST | - |
+| `/api/auth/me` | GET | sessão |
+| `/api/courses` | GET | - |
+| `/api/courses/[slug]` | GET | - |
+| `/api/enrollments` | GET, POST | sessão |
+| `/api/enrollments/[id]/complete` | PATCH | sessão |
+| `/api/enrollments/[id]/certificate` | GET | sessão |
+
+## Testes
+
+Nenhum framework de testes está configurado propositalmente — este repositório é a base para você escrever seus próprios testes de automação em cima dele.

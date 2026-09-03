@@ -1,0 +1,63 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import ViewMarketplaceButton from "@/components/dashboard/ViewMarketplaceButton";
+import EnrolledCourseListItem, {
+  type EnrolledCourseSummary,
+} from "@/components/dashboard/EnrolledCourseListItem";
+
+export default function DashboardClient() {
+  const [enrollments, setEnrollments] = useState<EnrolledCourseSummary[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/enrollments")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setEnrollments(data.enrollments);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <div data-testid="dashboard-page" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Meu Dashboard</h1>
+          <p className="text-gray-600">Acompanhe seus cursos e continue aprendendo.</p>
+        </div>
+        <ViewMarketplaceButton />
+      </div>
+
+      <section>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900">Meus Cursos</h2>
+
+        {enrollments === null && (
+          <p data-testid="dashboard-loading" className="text-gray-500">
+            Carregando...
+          </p>
+        )}
+
+        {enrollments !== null && enrollments.length === 0 && (
+          <p
+            data-testid="dashboard-empty-state"
+            className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500"
+          >
+            Você ainda não está matriculado em nenhum curso. Visite o
+            marketplace para escolher um curso e começar.
+          </p>
+        )}
+
+        {enrollments && enrollments.length > 0 && (
+          <div data-testid="enrolled-course-list" className="space-y-2">
+            {enrollments.map((enrollment) => (
+              <EnrolledCourseListItem key={enrollment.id} enrollment={enrollment} />
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}

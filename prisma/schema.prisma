@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  COMPLETED
+}
+
+model User {
+  id                String       @id @default(cuid())
+  name              String
+  email             String       @unique
+  passwordHash      String
+  phone             String?
+  headline          String?
+  bio               String?
+  websiteUrl        String?
+  facebookUsername  String?
+  instagramUsername String?
+  linkedinUrl       String?
+  tiktokUsername    String?
+  xUsername         String?
+  youtubeUsername   String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  enrollments       Enrollment[]
+}
+
+model Course {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  description String
+  language    String
+  imageUrl    String?
+  modules     Module[]
+  enrollments Enrollment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Module {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  order     Int
+  youtubeId String
+  createdAt DateTime @default(now())
+
+  @@unique([courseId, order])
+}
+
+model Enrollment {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    String
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  status      EnrollmentStatus @default(ENROLLED)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+
+  @@unique([userId, courseId])
+}

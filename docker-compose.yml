@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: testing-playground-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: playground
+      POSTGRES_PASSWORD: playground
+      POSTGRES_DB: testing_playground
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
