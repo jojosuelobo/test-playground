@@ -21,5 +21,6 @@ export const config = {
     "/course/:path*",
     "/dashboard/:path*",
     "/account/:path*",
+    "/professor/:path*",
   ],
 };

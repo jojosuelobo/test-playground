@@ -16,6 +16,7 @@ export type AuthUser = {
   id: string;
   name: string;
   email: string;
+  role: "STUDENT" | "TEACHER";
 };
 
 type ActiveModal = "login" | "signup" | null;
@@ -56,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     (authenticatedUser: AuthUser) => {
       setUser(authenticatedUser);
       setActiveModal(null);
-      router.push("/dashboard");
+      router.push(authenticatedUser.role === "TEACHER" ? "/professor" : "/dashboard");
     },
     [router]
   );

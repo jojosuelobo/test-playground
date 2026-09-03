@@ -159,11 +159,26 @@ async function main() {
       name: "Usuário Demo",
       email: demoEmail,
       passwordHash: demoPasswordHash,
+      role: "STUDENT",
+    },
+  });
+
+  const professorEmail = "professor@admin.com";
+  const professorPasswordHash = await hashPassword("admin");
+  await prisma.user.upsert({
+    where: { email: professorEmail },
+    update: { role: "TEACHER" },
+    create: {
+      name: "Professor",
+      email: professorEmail,
+      passwordHash: professorPasswordHash,
+      role: "TEACHER",
     },
   });
 
   console.log("Seed concluído.");
   console.log(`Usuário demo: ${demoEmail} / Password123!`);
+  console.log(`Usuário professor: ${professorEmail} / admin`);
 }
 
 main()

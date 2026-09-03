@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useAuth } from "@/components/auth/AuthContext";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 
@@ -66,6 +67,8 @@ function toFormState(account: Account): FormState {
 }
 
 export default function AccountForm() {
+  const { user } = useAuth();
+  const isTeacher = user?.role === "TEACHER";
   const [account, setAccount] = useState<Account | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [error, setError] = useState<string | null>(null);
@@ -142,13 +145,15 @@ export default function AccountForm() {
             {account.name}
           </p>
           <p className="text-sm text-gray-500">{account.email}</p>
-          <Link
-            href={`/u/${account.id}`}
-            data-testid="account-public-profile-link"
-            className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:underline"
-          >
-            Ver perfil público
-          </Link>
+          {!isTeacher && (
+            <Link
+              href={`/u/${account.id}`}
+              data-testid="account-public-profile-link"
+              className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:underline"
+            >
+              Ver perfil público
+            </Link>
+          )}
         </div>
       </aside>
 
@@ -157,67 +162,71 @@ export default function AccountForm() {
         data-testid="account-form"
         className="flex-1 rounded-xl border border-gray-200 bg-white p-6"
       >
-        <h2 className="mb-1 text-lg font-semibold text-gray-900">Dados Básicos</h2>
-        <p className="mb-5 text-sm text-gray-500">
-          Essas informações aparecem no seu perfil e no certificado.
-        </p>
+        {!isTeacher && (
+          <div data-testid="account-basic-info-section">
+            <h2 className="mb-1 text-lg font-semibold text-gray-900">Dados Básicos</h2>
+            <p className="mb-5 text-sm text-gray-500">
+              Essas informações aparecem no seu perfil e no certificado.
+            </p>
 
-        <FormField
-          label="Nome"
-          name="name"
-          testId="account-name-input"
-          value={form.name}
-          onChange={updateField("name")}
-          required
-        />
+            <FormField
+              label="Nome"
+              name="name"
+              testId="account-name-input"
+              value={form.name}
+              onChange={updateField("name")}
+              required
+            />
 
-        <div className="mb-4">
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            value={account.email}
-            disabled
-            data-testid="account-email-display"
-            className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-500"
-          />
-        </div>
+            <div className="mb-4">
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                value={account.email}
+                disabled
+                data-testid="account-email-display"
+                className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-500"
+              />
+            </div>
 
-        <FormField
-          label="Telefone"
-          name="phone"
-          type="tel"
-          testId="account-phone-input"
-          value={form.phone}
-          onChange={updateField("phone")}
-        />
+            <FormField
+              label="Telefone"
+              name="phone"
+              type="tel"
+              testId="account-phone-input"
+              value={form.phone}
+              onChange={updateField("phone")}
+            />
 
-        <FormField
-          label="Headline"
-          name="headline"
-          testId="account-headline-input"
-          placeholder='Ex: "Estudante de Java" ou "Desenvolvedor Backend"'
-          value={form.headline}
-          onChange={updateField("headline")}
-        />
+            <FormField
+              label="Headline"
+              name="headline"
+              testId="account-headline-input"
+              placeholder='Ex: "Estudante de Java" ou "Desenvolvedor Backend"'
+              value={form.headline}
+              onChange={updateField("headline")}
+            />
 
-        <div className="mb-6">
-          <label
-            htmlFor="bio"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
-          >
-            Biografia
-          </label>
-          <textarea
-            id="bio"
-            name="bio"
-            rows={4}
-            data-testid="account-bio-input"
-            value={form.bio}
-            onChange={(event) => updateField("bio")(event.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-          />
-        </div>
+            <div className="mb-6">
+              <label
+                htmlFor="bio"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Biografia
+              </label>
+              <textarea
+                id="bio"
+                name="bio"
+                rows={4}
+                data-testid="account-bio-input"
+                value={form.bio}
+                onChange={(event) => updateField("bio")(event.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              />
+            </div>
+          </div>
+        )}
 
         <h2 className="mb-1 text-lg font-semibold text-gray-900">Links</h2>
         <p className="mb-5 text-sm text-gray-500">

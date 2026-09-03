@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json(
     {
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
     },
     { status: 201 }
   );

@@ -11,13 +11,14 @@ export default function HomeCTA() {
   if (isLoading) return <div className="h-[52px]" />;
 
   if (user) {
+    const isTeacher = user.role === "TEACHER";
     return (
       <Link
-        href="/dashboard"
+        href={isTeacher ? "/professor" : "/dashboard"}
         data-testid="home-dashboard-link"
         className={buttonStyles({ variant: "primary", size: "lg" })}
       >
-        Ir para o Dashboard
+        {isTeacher ? "Ir para o Painel do Professor" : "Ir para o Dashboard"}
       </Link>
     );
   }

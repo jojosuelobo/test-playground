@@ -30,6 +30,6 @@ export async function POST(request: NextRequest) {
   await setSessionCookie(user.id, user.email);
 
   return NextResponse.json({
-    user: { id: user.id, name: user.name, email: user.email },
+    user: { id: user.id, name: user.name, email: user.email, role: user.role },
   });
 }

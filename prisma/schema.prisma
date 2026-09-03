@@ -12,11 +12,17 @@ enum EnrollmentStatus {
   COMPLETED
 }
 
+enum Role {
+  STUDENT
+  TEACHER
+}
+
 model User {
   id                String       @id @default(cuid())
   name              String
   email             String       @unique
   passwordHash      String
+  role              Role         @default(STUDENT)
   phone             String?
   headline          String?
   bio               String?

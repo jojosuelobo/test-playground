@@ -27,13 +27,23 @@ export default function Navbar() {
         <nav className="flex items-center gap-2 sm:gap-3">
           {isLoading ? null : user ? (
             <>
-              <Link
-                href="/dashboard"
-                data-testid="nav-dashboard-link"
-                className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
-              >
-                Dashboard
-              </Link>
+              {user.role === "TEACHER" ? (
+                <Link
+                  href="/professor"
+                  data-testid="nav-professor-link"
+                  className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
+                >
+                  Painel do Professor
+                </Link>
+              ) : (
+                <Link
+                  href="/dashboard"
+                  data-testid="nav-dashboard-link"
+                  className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
+                >
+                  Dashboard
+                </Link>
+              )}
               <Link
                 href="/account"
                 data-testid="nav-account-link"

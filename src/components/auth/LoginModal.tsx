@@ -54,6 +54,12 @@ export default function LoginModal({
 
   return (
     <Modal open={open} onClose={onClose} title="Entrar" testId="login-modal">
+      <p
+        data-testid="login-professor-credentials-hint"
+        className="mb-4 rounded-md bg-indigo-50 px-3 py-2 text-xs text-indigo-700"
+      >
+        Conta de professor: <strong>professor@admin.com</strong> / <strong>admin</strong>
+      </p>
       <form onSubmit={handleSubmit} data-testid="login-form">
         <FormField
           label="Email"
