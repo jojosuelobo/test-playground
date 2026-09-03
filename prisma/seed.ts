@@ -3,13 +3,41 @@ import { hashPassword } from "../src/lib/auth/password";
 
 const prisma = new PrismaClient();
 
+// Vídeos do canal https://www.youtube.com/@jojosuelobo
 const YOUTUBE_IDS = [
-  "dQw4w9WgXcQ",
-  "jNQXAC9IVRw",
-  "9bZkp7q19f0",
-  "M7lc1UVf-VE",
-  "ZXsQAXx_ao0",
+  "whI_wla88Do",
+  "k9y8Ie7uG8k",
+  "cQmNOQoufi0",
+  "yGDlkRRh3aE",
+  "dZMSbVgHlMU",
+  "4qrrsWhcgnU",
+  "OnFPaBpyMtE",
+  "-70ORQAWBs8",
+  "5mYAXaUDcX0",
+  "YBea4_eDRzA",
+  "4GCPzUiboB4",
+  "a9-JH7FrNYM",
+  "AORa1Roo8pU",
+  "r13OOzi9CQA",
+  "t89qyDcciPo",
+  "rKLp6QA9Wt4",
+  "Jon3WcApVVU",
+  "ClyQl8ffCms",
+  "BriYK5Xf3i4",
+  "1F1qpbpqyVI",
+  "ZMS_o-uCr7Y",
+  "BfEBHhONTEY",
+  "c-yIBfyED34",
 ];
+
+function shuffle<T>(items: T[]): T[] {
+  const array = [...items];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 
 type CourseSeed = {
   slug: string;
@@ -102,19 +130,21 @@ async function main() {
       },
     });
 
+    const courseVideoIds = shuffle(YOUTUBE_IDS).slice(0, course.moduleTitles.length);
+
     for (const [index, title] of course.moduleTitles.entries()) {
       const order = index + 1;
       await prisma.module.upsert({
         where: { courseId_order: { courseId: createdCourse.id, order } },
         update: {
           title,
-          youtubeId: YOUTUBE_IDS[index % YOUTUBE_IDS.length],
+          youtubeId: courseVideoIds[index],
         },
         create: {
           courseId: createdCourse.id,
           title,
           order,
-          youtubeId: YOUTUBE_IDS[index % YOUTUBE_IDS.length],
+          youtubeId: courseVideoIds[index],
         },
       });
     }
