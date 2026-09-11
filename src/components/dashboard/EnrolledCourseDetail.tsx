@@ -59,6 +59,7 @@ export default function EnrolledCourseDetail({
         <p className="mb-4 text-gray-600">{error}</p>
         <Link
           href="/dashboard"
+          data-testid="enrolled-course-detail-back-to-dashboard-link"
           className="font-medium text-indigo-600 hover:underline"
         >
           Voltar ao Dashboard
