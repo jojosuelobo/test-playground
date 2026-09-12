@@ -119,11 +119,39 @@ describe('Waits', () => {
         it('signs up and waits on the actual network response', () => {
             cy.intercept('POST', '/api/auth/signup').as('signup')
 
-            fillSignupForm()
+            const name = faker.person.firstName()
+            const email = faker.internet.email()
+            const password = faker.internet.password()
+            cy.fillSignupForm(name, email, password)
 
             cy.wait('@signup').its('response.statusCode').should('eq', 201)
-            
+
             cy.contains('Meu Dashboard').should('be.visible')
         })
+    })
+})
+
+describe('Flaky Tests', () => {
+    // Each of these re-rolls its randomness on every run/retry (fresh request, fresh
+    // page load), so cypress.config.ts's `retries.runMode` can genuinely rescue them -
+    // this isn't a deterministic bug retries would just paper over.
+
+    it('flakes on an unreliable backend response', () => {
+        // ~50% of requests come back with success: false - a flaky dependency/API.
+        cy.request('GET', '/api/demo/flaky').its('body.success').should('eq', true)
+    })
+
+    it('flakes on a UI element that can render after the assertion timeout', () => {
+        // The message shows up after a random 0-6s delay, checked with the default
+        // 4s command timeout - fails whenever the delay happens to land past 4s.
+        cy.visit('/demo/flaky')
+        cy.get('[data-testid="flaky-ready-message"]').should('be.visible')
+    })
+
+    it('flakes on a UI element that only renders about half the time', () => {
+        // The banner is a coin flip on every page load - a classic "works on my
+        // machine" race with no network involved at all.
+        cy.visit('/demo/flaky')
+        cy.get('[data-testid="flaky-banner"]').should('exist')
     })
 })
