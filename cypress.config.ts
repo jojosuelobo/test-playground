@@ -9,7 +9,7 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://playground.serverapp.com.br',
     scrollBehavior: 'center',
     setupNodeEvents(on, config) {},
   },
