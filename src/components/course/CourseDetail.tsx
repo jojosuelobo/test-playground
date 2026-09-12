@@ -99,6 +99,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       <div className="mb-8">
         <EnrollButton
           courseId={course.id}
+          courseLanguage={course.language}
           initialStatus={enrollment?.status ?? null}
         />
       </div>

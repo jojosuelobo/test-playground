@@ -234,3 +234,55 @@ describe('Page Objects', () => {
         })
     })
 })
+
+describe('Cy Prompt + Self Heal', () => {
+    let courseId
+    let sqlCourseId
+
+    before(() => {
+        cy.request('GET', '/api/courses').then((response) => {
+            const course = response.body.courses.find((c) => c.slug === 'java-fundamentals')
+            expect(course, `course with slug "java-fundamentals"`).to.exist
+            courseId = course.id
+
+            const sqlCourse = response.body.courses.find((c) => c.slug === 'sql-fundamentals')
+            expect(sqlCourse, `course with slug "sql-fundamentals"`).to.exist
+            sqlCourseId = sqlCourse.id
+        })
+    })
+
+    describe('cy.prompt only', () => {
+        beforeEach(() => {
+            cy.createStudentUser()
+            cy.visit(`/course/${courseId}`)
+        })
+
+        it('enrolls, completes the course and views the certificate, described in plain language', () => {
+            // No cy.get, no selectors at all - just what a human would tell another
+            // human to do. Cypress' AI turns each line into real commands.
+            cy.prompt([
+                'Click the button to enroll in this course',
+                'Click the link to go to the dashboard',
+                'Click on the enrolled course in the list to open it',
+                'Click the button to mark the course as complete',
+                'Click the button to view the certificate',
+                'Confirm the text "Certificado de Conclusão" is visible on the page',
+            ])
+        })
+    })
+
+    describe('Self-heal against an unstable label', () => {
+        it('still enrolls even though the button text is different on every load', () => {
+            cy.createStudentUser()
+            cy.visit(`/course/${sqlCourseId}`)
+
+            // This course's enroll button shows a random label on every page load
+            // (see EnrollButton.tsx) - a selector or assertion pinned to its text
+            // would flake constantly. Describing it by id and color instead lets the
+            // AI behind cy.prompt find the right element regardless of the label.
+            cy.prompt(['Click the blue button with id "enroll-button" to enroll in this course'])
+
+            cy.get('[data-testid="enrollment-dashboard-link"]').should('be.visible')
+        })
+    })
+})
