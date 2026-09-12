@@ -38,6 +38,7 @@ export default function CompleteCourseButton({
     <div>
       <Button
         variant="success"
+        id="complete-course-button"
         testId="complete-course-button"
         onClick={handleClick}
         disabled={isSubmitting}

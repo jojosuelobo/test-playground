@@ -52,6 +52,7 @@ export default function EnrollButton({ courseId, initialStatus }: EnrollButtonPr
         </Badge>
         <Link
           href="/dashboard"
+          id="enrollment-dashboard-link"
           data-testid="enrollment-dashboard-link"
           className="text-sm font-medium text-indigo-600 hover:underline"
         >
@@ -66,6 +67,7 @@ export default function EnrollButton({ courseId, initialStatus }: EnrollButtonPr
       <Button
         variant="primary"
         size="lg"
+        id="enroll-button"
         testId="enroll-button"
         onClick={handleEnroll}
         disabled={isSubmitting}

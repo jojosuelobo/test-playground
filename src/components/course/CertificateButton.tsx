@@ -5,6 +5,7 @@ export default function CertificateButton({ enrollmentId }: { enrollmentId: stri
   return (
     <Link
       href={`/dashboard/${enrollmentId}/certificate`}
+      id="certificate-button"
       data-testid="certificate-button"
       className={buttonStyles({ variant: "warning" })}
     >

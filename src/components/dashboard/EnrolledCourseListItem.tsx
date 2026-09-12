@@ -22,6 +22,7 @@ export default function EnrolledCourseListItem({
   return (
     <Link
       href={`/dashboard/${enrollment.id}`}
+      id={`enrolled-course-list-item-${enrollment.id}`}
       data-testid={`enrolled-course-list-item-${enrollment.id}`}
       className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 transition hover:border-indigo-300 hover:bg-gray-50"
     >
