@@ -25,6 +25,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Simulates a slow signup (e.g. a heavy provisioning step) for the Cypress "Waits" demo.
+  const randomDelayMs = 5000 + Math.floor(Math.random() * 5000);
+  await new Promise((resolve) => setTimeout(resolve, randomDelayMs));
+
   const passwordHash = await hashPassword(password);
 
   const user = await prisma.user.create({
