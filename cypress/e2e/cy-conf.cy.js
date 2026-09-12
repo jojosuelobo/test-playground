@@ -132,25 +132,16 @@ describe('Waits', () => {
 })
 
 describe('Flaky Tests', () => {
-    // Each of these re-rolls its randomness on every run/retry (fresh request, fresh
-    // page load), so cypress.config.ts's `retries.runMode` can genuinely rescue them -
-    // this isn't a deterministic bug retries would just paper over.
-
     it('flakes on an unreliable backend response', () => {
-        // ~50% of requests come back with success: false - a flaky dependency/API.
         cy.request('GET', '/api/demo/flaky').its('body.success').should('eq', true)
     })
 
     it('flakes on a UI element that can render after the assertion timeout', () => {
-        // The message shows up after a random 0-6s delay, checked with the default
-        // 4s command timeout - fails whenever the delay happens to land past 4s.
         cy.visit('/demo/flaky')
         cy.get('[data-testid="flaky-ready-message"]').should('be.visible')
     })
 
     it('flakes on a UI element that only renders about half the time', () => {
-        // The banner is a coin flip on every page load - a classic "works on my
-        // machine" race with no network involved at all.
         cy.visit('/demo/flaky')
         cy.get('[data-testid="flaky-banner"]').should('exist')
     })
@@ -209,19 +200,14 @@ describe('Page Objects', () => {
 
     describe('Great - custom commands + before/beforeEach/after (with cleanup)', () => {
         before(() => {
-            // Runs once for this block, not per test: creating the user doesn't need
-            // to happen again for every `it` that reuses it.
             cy.createStudentUser()
         })
 
         beforeEach(() => {
-            // Runs before every test: always start from a clean, known page.
             cy.visit(`/course/${courseId}`)
         })
 
         after(() => {
-            // Runs once after this block, even if the test above fails - deletes the
-            // user created in `before` so the spec doesn't leave data behind.
             cy.request('DELETE', '/api/auth/me')
         })
 
@@ -258,8 +244,6 @@ describe('Cy Prompt + Self Heal', () => {
         })
 
         it('enrolls, completes the course and views the certificate, described in plain language', () => {
-            // No cy.get, no selectors at all - just what a human would tell another
-            // human to do. Cypress' AI turns each line into real commands.
             cy.prompt([
                 'Click the button to enroll in this course',
                 'Click the link to go to the dashboard',
@@ -276,10 +260,6 @@ describe('Cy Prompt + Self Heal', () => {
             cy.createStudentUser()
             cy.visit(`/course/${sqlCourseId}`)
 
-            // This course's enroll button shows a random label on every page load
-            // (see EnrollButton.tsx) - a selector or assertion pinned to its text
-            // would flake constantly. Describing it by id and color instead lets the
-            // AI behind cy.prompt find the right element regardless of the label.
             cy.prompt(['Click the blue button with id "enroll-button" to enroll in this course'])
 
             cy.get('[data-testid="enrollment-dashboard-link"]').should('be.visible')
