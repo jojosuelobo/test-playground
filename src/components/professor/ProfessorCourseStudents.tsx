@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Enrollment = {
   id: string;
@@ -18,6 +19,8 @@ type CourseStudentsData = {
 };
 
 export default function ProfessorCourseStudents({ courseId }: { courseId: string }) {
+  const { dict } = useI18n();
+  const t = dict.professor;
   const [data, setData] = useState<CourseStudentsData | null>(null);
   const [notFound, setNotFound] = useState(false);
 
@@ -40,7 +43,7 @@ export default function ProfessorCourseStudents({ courseId }: { courseId: string
   if (notFound) {
     return (
       <p data-testid="professor-course-not-found" className="text-gray-500">
-        Curso não encontrado.
+        {t.courseNotFound}
       </p>
     );
   }
@@ -48,7 +51,7 @@ export default function ProfessorCourseStudents({ courseId }: { courseId: string
   if (!data) {
     return (
       <p data-testid="professor-course-students-loading" className="text-gray-500">
-        Carregando...
+        {dict.common.loading}
       </p>
     );
   }
@@ -60,7 +63,7 @@ export default function ProfessorCourseStudents({ courseId }: { courseId: string
         data-testid="professor-back-link"
         className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-indigo-600"
       >
-        ← Voltar ao Painel do Professor
+        {t.backArrow}
       </Link>
 
       <h1
@@ -71,7 +74,7 @@ export default function ProfessorCourseStudents({ courseId }: { courseId: string
       </h1>
       <p className="mb-8 text-gray-600">
         {data.enrollments.length}{" "}
-        {data.enrollments.length === 1 ? "aluno matriculado" : "alunos matriculados"}
+        {data.enrollments.length === 1 ? t.enrolledStudentSingular : t.enrolledStudentPlural}
       </p>
 
       {data.enrollments.length === 0 ? (
@@ -79,7 +82,7 @@ export default function ProfessorCourseStudents({ courseId }: { courseId: string
           data-testid="professor-course-students-empty-state"
           className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500"
         >
-          Nenhum aluno matriculado neste curso ainda.
+          {t.emptyState}
         </p>
       ) : (
         <ul data-testid="professor-students-list" className="space-y-2">
@@ -107,7 +110,7 @@ export default function ProfessorCourseStudents({ courseId }: { courseId: string
                 color={enrollment.status === "COMPLETED" ? "green" : "amber"}
                 testId={`professor-student-status-${enrollment.id}`}
               >
-                {enrollment.status === "COMPLETED" ? "Concluído" : "Em andamento"}
+                {enrollment.status === "COMPLETED" ? t.statusCompleted : t.statusInProgress}
               </Badge>
             </li>
           ))}

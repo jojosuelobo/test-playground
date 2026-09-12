@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type ModalProps = {
   open: boolean;
@@ -12,6 +13,8 @@ type ModalProps = {
 };
 
 export default function Modal({ open, onClose, title, testId, children }: ModalProps) {
+  const { dict } = useI18n();
+
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -39,7 +42,7 @@ export default function Modal({ open, onClose, title, testId, children }: ModalP
           <button
             type="button"
             data-testid={`${testId}-close-button`}
-            aria-label="Fechar"
+            aria-label={dict.modal.closeAria}
             className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600"
             onClick={onClose}
           >

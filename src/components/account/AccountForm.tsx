@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthContext";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Account = {
   id: string;
@@ -68,6 +69,8 @@ function toFormState(account: Account): FormState {
 
 export default function AccountForm() {
   const { user } = useAuth();
+  const { dict } = useI18n();
+  const t = dict.account;
   const isTeacher = user?.role === "TEACHER";
   const [account, setAccount] = useState<Account | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
@@ -109,7 +112,7 @@ export default function AccountForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data?.message ?? "Não foi possível salvar as alterações.");
+        setError(data?.message ?? t.errorFallback);
         return;
       }
 
@@ -117,7 +120,7 @@ export default function AccountForm() {
       setForm(toFormState(data.account));
       setSuccess(true);
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(dict.common.networkError);
     } finally {
       setIsSubmitting(false);
     }
@@ -126,7 +129,7 @@ export default function AccountForm() {
   if (!account) {
     return (
       <p data-testid="account-loading" className="text-gray-500">
-        Carregando...
+        {dict.common.loading}
       </p>
     );
   }
@@ -151,7 +154,7 @@ export default function AccountForm() {
               data-testid="account-public-profile-link"
               className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:underline"
             >
-              Ver perfil público
+              {t.viewPublicProfile}
             </Link>
           )}
         </div>
@@ -164,13 +167,11 @@ export default function AccountForm() {
       >
         {!isTeacher && (
           <div data-testid="account-basic-info-section">
-            <h2 className="mb-1 text-lg font-semibold text-gray-900">Dados Básicos</h2>
-            <p className="mb-5 text-sm text-gray-500">
-              Essas informações aparecem no seu perfil e no certificado.
-            </p>
+            <h2 className="mb-1 text-lg font-semibold text-gray-900">{t.basicInfoHeading}</h2>
+            <p className="mb-5 text-sm text-gray-500">{t.basicInfoSubtitle}</p>
 
             <FormField
-              label="Nome"
+              label={t.nameLabel}
               name="name"
               testId="account-name-input"
               value={form.name}
@@ -180,7 +181,7 @@ export default function AccountForm() {
 
             <div className="mb-4">
               <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                Email
+                {t.emailLabel}
               </label>
               <input
                 value={account.email}
@@ -191,7 +192,7 @@ export default function AccountForm() {
             </div>
 
             <FormField
-              label="Telefone"
+              label={t.phoneLabel}
               name="phone"
               type="tel"
               testId="account-phone-input"
@@ -200,10 +201,10 @@ export default function AccountForm() {
             />
 
             <FormField
-              label="Headline"
+              label={t.headlineLabel}
               name="headline"
               testId="account-headline-input"
-              placeholder='Ex: "Estudante de Java" ou "Desenvolvedor Backend"'
+              placeholder={t.headlinePlaceholder}
               value={form.headline}
               onChange={updateField("headline")}
             />
@@ -213,7 +214,7 @@ export default function AccountForm() {
                 htmlFor="bio"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
               >
-                Biografia
+                {t.bioLabel}
               </label>
               <textarea
                 id="bio"
@@ -228,10 +229,8 @@ export default function AccountForm() {
           </div>
         )}
 
-        <h2 className="mb-1 text-lg font-semibold text-gray-900">Links</h2>
-        <p className="mb-5 text-sm text-gray-500">
-          Adicione links das suas redes sociais.
-        </p>
+        <h2 className="mb-1 text-lg font-semibold text-gray-900">{t.linksHeading}</h2>
+        <p className="mb-5 text-sm text-gray-500">{t.linksSubtitle}</p>
 
         <FormField
           label="Website"
@@ -303,7 +302,7 @@ export default function AccountForm() {
             data-testid="account-success-message"
             className="mb-4 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700"
           >
-            Alterações salvas com sucesso.
+            {t.successMessage}
           </p>
         )}
 
@@ -313,7 +312,7 @@ export default function AccountForm() {
           testId="account-save-button"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Salvando..." : "Salvar"}
+          {isSubmitting ? t.saving : t.save}
         </Button>
       </form>
     </div>

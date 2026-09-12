@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { getCourseVisual } from "@/lib/courseVisuals";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 export type EnrolledCourseSummary = {
   id: string;
@@ -17,6 +20,7 @@ export default function EnrolledCourseListItem({
 }: {
   enrollment: EnrolledCourseSummary;
 }) {
+  const { dict } = useI18n();
   const visual = getCourseVisual(enrollment.course.language);
 
   return (
@@ -44,7 +48,7 @@ export default function EnrolledCourseListItem({
           color={enrollment.status === "COMPLETED" ? "green" : "amber"}
           testId={`enrolled-course-status-${enrollment.id}`}
         >
-          {enrollment.status === "COMPLETED" ? "Concluído" : "Em andamento"}
+          {enrollment.status === "COMPLETED" ? dict.dashboard.statusCompleted : dict.dashboard.statusInProgress}
         </Badge>
         <span className="text-gray-400">→</span>
       </div>

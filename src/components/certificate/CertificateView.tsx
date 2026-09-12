@@ -1,3 +1,7 @@
+"use client";
+
+import { useI18n } from "@/i18n/LanguageProvider";
+
 type CertificateViewProps = {
   userName: string;
   courseTitle: string;
@@ -9,11 +13,15 @@ export default function CertificateView({
   courseTitle,
   completedAt,
 }: CertificateViewProps) {
-  const formattedDate = new Date(completedAt).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  const { dict, locale } = useI18n();
+  const formattedDate = new Date(completedAt).toLocaleDateString(
+    locale === "pt" ? "pt-BR" : "en-US",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }
+  );
 
   return (
     <div
@@ -22,16 +30,16 @@ export default function CertificateView({
     >
       <div className="mb-4 text-4xl">🏆</div>
       <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-amber-600">
-        Certificado de Conclusão
+        {dict.certificate.title}
       </p>
-      <p className="mb-6 text-sm text-gray-500">Certificamos que</p>
+      <p className="mb-6 text-sm text-gray-500">{dict.certificate.certifyThat}</p>
       <p
         data-testid="certificate-user-name"
         className="mb-6 text-3xl font-bold text-gray-900"
       >
         {userName}
       </p>
-      <p className="mb-2 text-sm text-gray-500">concluiu com sucesso o curso</p>
+      <p className="mb-2 text-sm text-gray-500">{dict.certificate.successfullyCompleted}</p>
       <p
         data-testid="certificate-course-title"
         className="mb-8 text-2xl font-semibold text-indigo-700"
@@ -39,7 +47,7 @@ export default function CertificateView({
         {courseTitle}
       </p>
       <p data-testid="certificate-completed-date" className="text-sm text-gray-500">
-        Concluído em {formattedDate}
+        {dict.certificate.completedOn(formattedDate)}
       </p>
     </div>
   );

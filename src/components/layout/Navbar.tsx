@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthContext";
 import Button from "@/components/ui/Button";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 export default function Navbar() {
   const { user, isLoading, openLoginModal, openSignupModal, logout } = useAuth();
+  const { locale, dict, setLocale } = useI18n();
+
+  const nextLocale = locale === "en" ? "pt" : "en";
 
   return (
     <header
@@ -25,6 +29,16 @@ export default function Navbar() {
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            data-testid="nav-language-toggle"
+            aria-label={dict.nav.languageAria}
+            onClick={() => setLocale(nextLocale)}
+            className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-indigo-600"
+          >
+            🌐 {nextLocale.toUpperCase()}
+          </button>
+
           {isLoading ? null : user ? (
             <>
               {user.role === "TEACHER" ? (
@@ -33,7 +47,7 @@ export default function Navbar() {
                   data-testid="nav-professor-link"
                   className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
                 >
-                  Painel do Professor
+                  {dict.nav.professorPanel}
                 </Link>
               ) : (
                 <Link
@@ -41,7 +55,7 @@ export default function Navbar() {
                   data-testid="nav-dashboard-link"
                   className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
                 >
-                  Dashboard
+                  {dict.nav.dashboard}
                 </Link>
               )}
               <Link
@@ -49,7 +63,7 @@ export default function Navbar() {
                 data-testid="nav-account-link"
                 className="hidden text-sm font-medium text-gray-600 hover:text-indigo-600 sm:inline-block"
               >
-                Minha conta
+                {dict.nav.myAccount}
               </Link>
               <Button
                 variant="secondary"
@@ -57,7 +71,7 @@ export default function Navbar() {
                 testId="nav-logout-button"
                 onClick={logout}
               >
-                Sair
+                {dict.nav.logout}
               </Button>
             </>
           ) : (
@@ -68,7 +82,7 @@ export default function Navbar() {
                 testId="nav-login-button"
                 onClick={openLoginModal}
               >
-                Log In
+                {dict.nav.login}
               </Button>
               <Button
                 variant="primary"
@@ -76,7 +90,7 @@ export default function Navbar() {
                 testId="nav-signup-button"
                 onClick={openSignupModal}
               >
-                Sign Up
+                {dict.nav.signup}
               </Button>
             </>
           )}

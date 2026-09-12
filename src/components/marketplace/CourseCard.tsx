@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { getCourseVisual } from "@/lib/courseVisuals";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 export type CourseSummary = {
   id: string;
@@ -12,6 +15,7 @@ export type CourseSummary = {
 };
 
 export default function CourseCard({ course }: { course: CourseSummary }) {
+  const { dict } = useI18n();
   const visual = getCourseVisual(course.language);
 
   return (
@@ -38,7 +42,7 @@ export default function CourseCard({ course }: { course: CourseSummary }) {
       </h3>
       <p className="mb-4 flex-1 text-sm text-gray-600">{course.description}</p>
       <span className="text-sm font-medium text-indigo-600 group-hover:underline">
-        Ver curso →
+        {dict.marketplace.viewCourse}
       </span>
     </Link>
   );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type EnrollmentStatus = "ENROLLED" | "COMPLETED";
 
@@ -13,31 +14,25 @@ type EnrollButtonProps = {
   initialStatus: EnrollmentStatus | null;
 };
 
-const statusLabel: Record<EnrollmentStatus, string> = {
-  ENROLLED: "Matriculado",
-  COMPLETED: "Concluído",
-};
-
-// Demo-only for the Cypress "cy.prompt + Self Heal" talk segment: the SQL course's
-// enroll button shows a different label on every page load, while id/data-testid/color
-// stay the same - a text-based selector would flake, but an AI prompt describing "the
-// blue enroll button" (or the id) keeps finding the right element regardless.
-const ENROLL_BUTTON_LABELS = [
-  "Inscrever-se",
-  "Quero começar!",
-  "Bora estudar",
-  "Garantir minha vaga",
-  "Vamos nessa!",
-];
-
 export default function EnrollButton({ courseId, courseLanguage, initialStatus }: EnrollButtonProps) {
+  const { dict } = useI18n();
+  const t = dict.course.enroll;
+  const statusLabel: Record<EnrollmentStatus, string> = {
+    ENROLLED: t.statusEnrolled,
+    COMPLETED: t.statusCompleted,
+  };
+
   const [status, setStatus] = useState<EnrollmentStatus | null>(initialStatus);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Demo-only for the Cypress "cy.prompt + Self Heal" talk segment: the SQL course's
+  // enroll button shows a different label on every page load, while id/data-testid/color
+  // stay the same - a text-based selector would flake, but an AI prompt describing "the
+  // blue enroll button" (or the id) keeps finding the right element regardless.
   const [enrollLabel] = useState(() =>
     courseLanguage === "SQL"
-      ? ENROLL_BUTTON_LABELS[Math.floor(Math.random() * ENROLL_BUTTON_LABELS.length)]
-      : "Inscrever-se"
+      ? t.sqlLabels[Math.floor(Math.random() * t.sqlLabels.length)]
+      : t.defaultLabel
   );
 
   const handleEnroll = async () => {
@@ -51,12 +46,12 @@ export default function EnrollButton({ courseId, courseLanguage, initialStatus }
       });
       const data = await res.json();
       if (!res.ok && res.status !== 409) {
-        setError(data?.message ?? "Não foi possível se matricular.");
+        setError(data?.message ?? t.errorFallback);
         return;
       }
       setStatus("ENROLLED");
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(dict.common.networkError);
     } finally {
       setIsSubmitting(false);
     }
@@ -74,7 +69,7 @@ export default function EnrollButton({ courseId, courseLanguage, initialStatus }
           data-testid="enrollment-dashboard-link"
           className="text-sm font-medium text-indigo-600 hover:underline"
         >
-          Ir para o Dashboard
+          {t.goToDashboard}
         </Link>
       </div>
     );
@@ -90,7 +85,7 @@ export default function EnrollButton({ courseId, courseLanguage, initialStatus }
         onClick={handleEnroll}
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Matriculando..." : enrollLabel}
+        {isSubmitting ? t.enrolling : enrollLabel}
       </Button>
       {error && (
         <p data-testid="enroll-error-message" className="mt-2 text-sm text-red-600">

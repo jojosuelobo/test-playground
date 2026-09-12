@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 // Demo-only page for the Cypress "Retry" talk segment. Each field below re-randomizes
 // on every page load, so a fresh Cypress test retry gets a fresh roll of the dice.
 export default function FlakyDemoPage() {
+  const { dict } = useI18n();
   const [showBanner, setShowBanner] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -23,12 +25,12 @@ export default function FlakyDemoPage() {
           data-testid="flaky-banner"
           className="mb-6 rounded-lg bg-indigo-50 px-4 py-3 text-indigo-700"
         >
-          🎉 Oferta especial só hoje!
+          {dict.flaky.banner}
         </p>
       )}
       {ready && (
         <p data-testid="flaky-ready-message" className="text-lg font-semibold text-emerald-600">
-          Pronto!
+          {dict.flaky.ready}
         </p>
       )}
     </div>

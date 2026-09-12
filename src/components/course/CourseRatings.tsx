@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthContext";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Rating = {
   id: string;
@@ -27,6 +28,8 @@ function Star({ filled }: { filled: boolean }) {
 
 export default function CourseRatings({ courseId }: { courseId: string }) {
   const { user } = useAuth();
+  const { dict } = useI18n();
+  const t = dict.course.ratings;
   const [data, setData] = useState<RatingsData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,12 +63,12 @@ export default function CourseRatings({ courseId }: { courseId: string }) {
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json?.message ?? "Não foi possível registrar sua avaliação.");
+        setError(json?.message ?? t.errorFallback);
         return;
       }
       loadRatings();
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(dict.common.networkError);
     } finally {
       setIsSubmitting(false);
     }
@@ -74,7 +77,7 @@ export default function CourseRatings({ courseId }: { courseId: string }) {
   if (!data) {
     return (
       <p data-testid="course-ratings-loading" className="text-gray-500">
-        Carregando avaliações...
+        {t.loading}
       </p>
     );
   }
@@ -91,32 +94,32 @@ export default function CourseRatings({ courseId }: { courseId: string }) {
           ))}
         </div>
         <span data-testid="course-ratings-count" className="text-sm text-gray-500">
-          ({data.count} {data.count === 1 ? "avaliação" : "avaliações"})
+          ({data.count} {data.count === 1 ? t.ratingSingular : t.ratingPlural})
         </span>
       </div>
 
       {!user && (
         <p data-testid="course-ratings-login-prompt" className="mb-6 text-sm text-gray-500">
-          Faça login para avaliar este curso.
+          {t.loginPrompt}
         </p>
       )}
 
       {user && !data.isEnrolled && (
         <p data-testid="course-ratings-enroll-prompt" className="mb-6 text-sm text-gray-500">
-          Matricule-se para avaliar este curso.
+          {t.enrollPrompt}
         </p>
       )}
 
       {user && data.isEnrolled && (
         <div className="mb-6">
-          <p className="mb-2 text-sm font-medium text-gray-700">Sua avaliação</p>
+          <p className="mb-2 text-sm font-medium text-gray-700">{t.yourRating}</p>
           <div data-testid="course-rating-widget" className="flex gap-1 text-2xl">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 type="button"
                 data-testid={`course-rating-star-${star}`}
-                aria-label={`Avaliar com ${star} estrela(s)`}
+                aria-label={t.rateAria(star)}
                 disabled={isSubmitting}
                 onClick={() => handleRate(star)}
                 className="disabled:opacity-60"
@@ -138,7 +141,7 @@ export default function CourseRatings({ courseId }: { courseId: string }) {
 
       {data.ratings.length === 0 ? (
         <p data-testid="course-ratings-empty-state" className="text-gray-500">
-          Nenhuma avaliação ainda.
+          {t.emptyState}
         </p>
       ) : (
         <ul data-testid="course-ratings-list" className="space-y-2">

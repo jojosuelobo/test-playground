@@ -5,8 +5,11 @@ import ViewMarketplaceButton from "@/components/dashboard/ViewMarketplaceButton"
 import EnrolledCourseListItem, {
   type EnrolledCourseSummary,
 } from "@/components/dashboard/EnrolledCourseListItem";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 export default function DashboardClient() {
+  const { dict } = useI18n();
+  const t = dict.dashboard;
   const [enrollments, setEnrollments] = useState<EnrolledCourseSummary[] | null>(null);
 
   useEffect(() => {
@@ -25,18 +28,18 @@ export default function DashboardClient() {
     <div data-testid="dashboard-page" className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Meu Dashboard</h1>
-          <p className="text-gray-600">Acompanhe seus cursos e continue aprendendo.</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t.title}</h1>
+          <p className="text-gray-600">{t.subtitle}</p>
         </div>
         <ViewMarketplaceButton />
       </div>
 
       <section>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">Meus Cursos</h2>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900">{t.myCourses}</h2>
 
         {enrollments === null && (
           <p data-testid="dashboard-loading" className="text-gray-500">
-            Carregando...
+            {dict.common.loading}
           </p>
         )}
 
@@ -45,8 +48,7 @@ export default function DashboardClient() {
             data-testid="dashboard-empty-state"
             className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500"
           >
-            Você ainda não está matriculado em nenhum curso. Visite o
-            marketplace para escolher um curso e começar.
+            {t.emptyState}
           </p>
         )}
 

@@ -7,6 +7,7 @@ import EnrollButton from "@/components/course/EnrollButton";
 import CourseComments from "@/components/course/CourseComments";
 import CourseRatings from "@/components/course/CourseRatings";
 import { getCourseVisual } from "@/lib/courseVisuals";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Module = {
   id: string;
@@ -28,16 +29,17 @@ type CourseDetailData = {
 
 type TabId = "modules" | "ratings" | "comments";
 
-const tabs: { id: TabId; label: string; testId: string }[] = [
-  { id: "modules", label: "Módulos", testId: "course-tab-modules" },
-  { id: "ratings", label: "Avaliações", testId: "course-tab-ratings" },
-  { id: "comments", label: "Comentários", testId: "course-tab-comments" },
-];
-
 export default function CourseDetail({ courseId }: { courseId: string }) {
+  const { dict } = useI18n();
   const [data, setData] = useState<CourseDetailData | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("modules");
+
+  const tabs: { id: TabId; label: string; testId: string }[] = [
+    { id: "modules", label: dict.course.tabModules, testId: "course-tab-modules" },
+    { id: "ratings", label: dict.course.tabRatings, testId: "course-tab-ratings" },
+    { id: "comments", label: dict.course.tabComments, testId: "course-tab-comments" },
+  ];
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +60,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
   if (notFound) {
     return (
       <p data-testid="course-not-found" className="text-gray-500">
-        Curso não encontrado.
+        {dict.course.notFound}
       </p>
     );
   }

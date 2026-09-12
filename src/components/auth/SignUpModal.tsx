@@ -5,6 +5,7 @@ import Modal from "@/components/ui/Modal";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 import type { AuthUser } from "@/components/auth/AuthContext";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type SignUpModalProps = {
   open: boolean;
@@ -26,6 +27,8 @@ export default function SignUpModal({
   onSuccess,
   onSwitchToLogin,
 }: SignUpModalProps) {
+  const { dict } = useI18n();
+  const t = dict.auth.signup;
   const [form, setForm] = useState(initialFormState);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,24 +50,24 @@ export default function SignUpModal({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data?.message ?? "Não foi possível criar a conta.");
+        setError(data?.message ?? t.errorFallback);
         return;
       }
 
       setForm(initialFormState);
       onSuccess(data.user);
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(dict.common.networkError);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Criar conta" testId="signup-modal">
+    <Modal open={open} onClose={onClose} title={t.title} testId="signup-modal">
       <form onSubmit={handleSubmit} data-testid="signup-form">
         <FormField
-          label="Nome"
+          label={t.nameLabel}
           name="name"
           testId="signup-name-input"
           value={form.name}
@@ -72,7 +75,7 @@ export default function SignUpModal({
           required
         />
         <FormField
-          label="Email"
+          label={t.emailLabel}
           name="email"
           type="email"
           testId="signup-email-input"
@@ -81,7 +84,7 @@ export default function SignUpModal({
           required
         />
         <FormField
-          label="Senha"
+          label={t.passwordLabel}
           name="password"
           type="password"
           testId="signup-password-input"
@@ -90,7 +93,7 @@ export default function SignUpModal({
           required
         />
         <FormField
-          label="Telefone (opcional)"
+          label={t.phoneLabel}
           name="phone"
           type="tel"
           testId="signup-phone-input"
@@ -112,17 +115,17 @@ export default function SignUpModal({
           disabled={isSubmitting}
           className="w-full"
         >
-          {isSubmitting ? "Criando conta..." : "Criar conta"}
+          {isSubmitting ? t.submitting : t.submit}
         </Button>
         <p className="mt-4 text-center text-sm text-gray-500">
-          Já tem conta?{" "}
+          {t.haveAccount}{" "}
           <button
             type="button"
             data-testid="signup-switch-to-login-button"
             className="font-semibold text-indigo-600 hover:underline"
             onClick={onSwitchToLogin}
           >
-            Entrar
+            {t.loginLink}
           </button>
         </p>
       </form>

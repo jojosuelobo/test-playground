@@ -7,6 +7,7 @@ import ModuleSection from "@/components/course/ModuleSection";
 import CompleteCourseButton from "@/components/course/CompleteCourseButton";
 import CertificateButton from "@/components/course/CertificateButton";
 import { getCourseVisual } from "@/lib/courseVisuals";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Module = {
   id: string;
@@ -31,6 +32,8 @@ export default function EnrolledCourseDetail({
 }: {
   enrollmentId: string;
 }) {
+  const { dict } = useI18n();
+  const t = dict.dashboard;
   const [enrollment, setEnrollment] = useState<EnrollmentDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +42,7 @@ export default function EnrolledCourseDetail({
     fetch(`/api/enrollments/${enrollmentId}`).then(async (res) => {
       if (cancelled) return;
       if (!res.ok) {
-        setError("Matrícula não encontrada.");
+        setError(t.enrollmentNotFound);
         return;
       }
       const json = await res.json();
@@ -48,7 +51,7 @@ export default function EnrolledCourseDetail({
     return () => {
       cancelled = true;
     };
-  }, [enrollmentId]);
+  }, [enrollmentId, t.enrollmentNotFound]);
 
   const handleCompleted = () =>
     setEnrollment((prev) => (prev ? { ...prev, status: "COMPLETED" } : prev));
@@ -62,7 +65,7 @@ export default function EnrolledCourseDetail({
           data-testid="enrolled-course-detail-back-to-dashboard-link"
           className="font-medium text-indigo-600 hover:underline"
         >
-          Voltar ao Dashboard
+          {dict.common.backToDashboard}
         </Link>
       </div>
     );
@@ -71,7 +74,7 @@ export default function EnrolledCourseDetail({
   if (!enrollment) {
     return (
       <p data-testid="enrolled-course-detail-loading" className="text-gray-500">
-        Carregando...
+        {dict.common.loading}
       </p>
     );
   }
@@ -85,7 +88,7 @@ export default function EnrolledCourseDetail({
         data-testid="enrolled-course-back-link"
         className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-indigo-600"
       >
-        ← Voltar ao Dashboard
+        {t.backToDashboardArrow}
       </Link>
 
       <div className="mb-6 flex items-center gap-3">
@@ -109,7 +112,7 @@ export default function EnrolledCourseDetail({
           color={enrollment.status === "COMPLETED" ? "green" : "amber"}
           testId="enrolled-course-detail-status"
         >
-          {enrollment.status === "COMPLETED" ? "Concluído" : "Em andamento"}
+          {enrollment.status === "COMPLETED" ? t.statusCompleted : t.statusInProgress}
         </Badge>
       </div>
 

@@ -27,7 +27,7 @@ describe('Strong Selectors', () => {
             cy.get('.bg-amber-500.text-white.shadow-sm').click() // certificate-button
 
             cy.get('.uppercase.tracking-widest.text-amber-600')
-                .should('contain.text', 'Certificado de Conclusão')
+                .should('contain.text', 'Certificate of Completion')
         })
     })
 
@@ -53,7 +53,7 @@ describe('Strong Selectors', () => {
                 cy.wait('@complete')
                 cy.get('#certificate-button').click()
 
-                cy.contains('Certificado de Conclusão').should('be.visible')
+                cy.contains('Certificate of Completion').should('be.visible')
             })
         })
     })
@@ -80,7 +80,7 @@ describe('Strong Selectors', () => {
                 cy.wait('@complete')
                 cy.get('[data-testid="certificate-button"]').click()
 
-                cy.contains('Certificado de Conclusão').should('be.visible')
+                cy.contains('Certificate of Completion').should('be.visible')
             })
         })
     })
@@ -100,7 +100,7 @@ describe('Waits', () => {
 
             cy.wait(10000)
 
-            cy.contains('Meu Dashboard').should('be.visible')
+            cy.contains('My Dashboard').should('be.visible')
         })
     })
 
@@ -111,7 +111,7 @@ describe('Waits', () => {
             const password = faker.internet.password()
             cy.fillSignupForm(name, email, password)
 
-            cy.contains('Meu Dashboard', { timeout: 15000 }).should('be.visible')
+            cy.contains('My Dashboard', { timeout: 15000 }).should('be.visible')
         })
     })
 
@@ -126,7 +126,7 @@ describe('Waits', () => {
 
             cy.wait('@signup').its('response.statusCode').should('eq', 201)
 
-            cy.contains('Meu Dashboard').should('be.visible')
+            cy.contains('My Dashboard').should('be.visible')
         })
     })
 })
@@ -179,7 +179,7 @@ describe('Page Objects', () => {
             cy.wait('@complete')
             cy.get('[data-testid="certificate-button"]').click()
 
-            cy.contains('Certificado de Conclusão').should('be.visible')
+            cy.contains('Certificate of Completion').should('be.visible')
         })
     })
 
@@ -194,7 +194,7 @@ describe('Page Objects', () => {
             cy.openFirstEnrolledCourse()
             cy.completeCourseAndViewCertificate()
 
-            cy.contains('Certificado de Conclusão').should('be.visible')
+            cy.contains('Certificate of Completion').should('be.visible')
         })
     })
 
@@ -216,7 +216,7 @@ describe('Page Objects', () => {
             cy.openFirstEnrolledCourse()
             cy.completeCourseAndViewCertificate()
 
-            cy.contains('Certificado de Conclusão').should('be.visible')
+            cy.contains('Certificate of Completion').should('be.visible')
         })
     })
 })
@@ -250,7 +250,7 @@ describe('Cy Prompt + Self Heal', () => {
                 'Click on the enrolled course in the list to open it',
                 'Click the button to mark the course as complete',
                 'Click the button to view the certificate',
-                'Confirm the text "Certificado de Conclusão" is visible on the page',
+                'Confirm the text "Certificate of Completion" is visible on the page',
             ])
         })
     })

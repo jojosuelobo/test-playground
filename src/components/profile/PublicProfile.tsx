@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { getCourseVisual } from "@/lib/courseVisuals";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Profile = {
   id: string;
@@ -92,6 +93,7 @@ function buildLinks(profile: Profile) {
 }
 
 export default function PublicProfile({ userId }: { userId: string }) {
+  const { dict } = useI18n();
   const [data, setData] = useState<PublicProfileData | null>(null);
   const [notFound, setNotFound] = useState(false);
 
@@ -114,7 +116,7 @@ export default function PublicProfile({ userId }: { userId: string }) {
   if (notFound) {
     return (
       <p data-testid="public-profile-not-found" className="text-gray-500">
-        Usuário não encontrado.
+        {dict.profile.notFound}
       </p>
     );
   }
@@ -122,7 +124,7 @@ export default function PublicProfile({ userId }: { userId: string }) {
   if (!data) {
     return (
       <p data-testid="public-profile-loading" className="text-gray-500">
-        Carregando...
+        {dict.common.loading}
       </p>
     );
   }
@@ -174,14 +176,14 @@ export default function PublicProfile({ userId }: { userId: string }) {
         </div>
       )}
 
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Cursos Concluídos</h2>
+      <h2 className="mb-4 text-lg font-semibold text-gray-900">{dict.profile.completedCoursesHeading}</h2>
 
       {completedCourses.length === 0 ? (
         <p
           data-testid="public-profile-no-completed-courses"
           className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500"
         >
-          Nenhum curso concluído ainda.
+          {dict.profile.noCompleted}
         </p>
       ) : (
         <div data-testid="public-profile-completed-courses" className="space-y-2">
@@ -201,7 +203,7 @@ export default function PublicProfile({ userId }: { userId: string }) {
                 </span>
                 <span className="font-medium text-gray-900">{course.title}</span>
                 <Badge color="green" className="ml-auto">
-                  Concluído
+                  {dict.profile.completedBadge}
                 </Badge>
               </Link>
             );

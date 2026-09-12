@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { getCourseVisual } from "@/lib/courseVisuals";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type ProfessorCourse = {
   id: string;
@@ -15,6 +16,8 @@ type ProfessorCourse = {
 };
 
 export default function ProfessorOverview() {
+  const { dict } = useI18n();
+  const t = dict.professor;
   const [courses, setCourses] = useState<ProfessorCourse[] | null>(null);
 
   useEffect(() => {
@@ -32,17 +35,15 @@ export default function ProfessorOverview() {
   if (courses === null) {
     return (
       <p data-testid="professor-loading" className="text-gray-500">
-        Carregando...
+        {dict.common.loading}
       </p>
     );
   }
 
   return (
     <div data-testid="professor-page">
-      <h1 className="mb-1 text-2xl font-bold text-gray-900">Painel do Professor</h1>
-      <p className="mb-8 text-gray-600">
-        Visão geral dos cursos e alunos matriculados na plataforma.
-      </p>
+      <h1 className="mb-1 text-2xl font-bold text-gray-900">{t.title}</h1>
+      <p className="mb-8 text-gray-600">{t.subtitle}</p>
 
       <div data-testid="professor-course-list" className="space-y-2">
         {courses.map((course) => {
@@ -70,11 +71,10 @@ export default function ProfessorOverview() {
               <div className="flex items-center gap-3">
                 <Badge color="indigo" testId={`professor-course-enrolled-count-${course.id}`}>
                   {course.enrolledCount}{" "}
-                  {course.enrolledCount === 1 ? "aluno" : "alunos"}
+                  {course.enrolledCount === 1 ? t.studentSingular : t.studentPlural}
                 </Badge>
                 <Badge color="green" testId={`professor-course-completed-count-${course.id}`}>
-                  {course.completedCount} concluído
-                  {course.completedCount === 1 ? "" : "s"}
+                  {t.completed(course.completedCount)}
                 </Badge>
                 <span className="text-gray-400">→</span>
               </div>

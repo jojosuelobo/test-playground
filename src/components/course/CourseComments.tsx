@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/AuthContext";
 import Button from "@/components/ui/Button";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type Comment = {
   id: string;
@@ -13,6 +14,8 @@ type Comment = {
 
 export default function CourseComments({ courseId }: { courseId: string }) {
   const { user } = useAuth();
+  const { dict } = useI18n();
+  const t = dict.course.comments;
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -44,14 +47,14 @@ export default function CourseComments({ courseId }: { courseId: string }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data?.message ?? "Não foi possível publicar o comentário.");
+        setError(data?.message ?? t.errorFallback);
         return;
       }
 
       setComments((prev) => [data.comment, ...(prev ?? [])]);
       setBody("");
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(dict.common.networkError);
     } finally {
       setIsSubmitting(false);
     }
@@ -66,7 +69,7 @@ export default function CourseComments({ courseId }: { courseId: string }) {
             value={body}
             onChange={(event) => setBody(event.target.value)}
             rows={3}
-            placeholder="Deixe um comentário sobre o curso..."
+            placeholder={t.placeholder}
             required
             className="mb-2 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
@@ -85,24 +88,24 @@ export default function CourseComments({ courseId }: { courseId: string }) {
             testId="course-comment-submit-button"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Publicando..." : "Comentar"}
+            {isSubmitting ? t.submitting : t.submit}
           </Button>
         </form>
       ) : (
         <p data-testid="course-comments-login-prompt" className="mb-6 text-sm text-gray-500">
-          Faça login para comentar sobre este curso.
+          {t.loginPrompt}
         </p>
       )}
 
       {comments === null && (
         <p data-testid="course-comments-loading" className="text-gray-500">
-          Carregando comentários...
+          {t.loading}
         </p>
       )}
 
       {comments !== null && comments.length === 0 && (
         <p data-testid="course-comments-empty-state" className="text-gray-500">
-          Nenhum comentário ainda. Seja o primeiro a comentar.
+          {t.emptyState}
         </p>
       )}
 

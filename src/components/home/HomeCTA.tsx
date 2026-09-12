@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthContext";
 import Button from "@/components/ui/Button";
 import { buttonStyles } from "@/components/ui/buttonStyles";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 export default function HomeCTA() {
   const { user, isLoading, openLoginModal, openSignupModal } = useAuth();
+  const { dict } = useI18n();
 
   if (isLoading) return <div className="h-[52px]" />;
 
@@ -18,7 +20,7 @@ export default function HomeCTA() {
         data-testid="home-dashboard-link"
         className={buttonStyles({ variant: "primary", size: "lg" })}
       >
-        {isTeacher ? "Ir para o Painel do Professor" : "Ir para o Dashboard"}
+        {isTeacher ? dict.home.goToProfessor : dict.home.goToDashboard}
       </Link>
     );
   }
@@ -31,7 +33,7 @@ export default function HomeCTA() {
         testId="home-login-button"
         onClick={openLoginModal}
       >
-        Log In
+        {dict.nav.login}
       </Button>
       <Button
         variant="primary"
@@ -39,7 +41,7 @@ export default function HomeCTA() {
         testId="home-signup-button"
         onClick={openSignupModal}
       >
-        Sign Up
+        {dict.nav.signup}
       </Button>
     </div>
   );

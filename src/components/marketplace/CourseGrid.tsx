@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import CourseCard, { type CourseSummary } from "@/components/marketplace/CourseCard";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 export default function CourseGrid() {
+  const { dict } = useI18n();
   const [courses, setCourses] = useState<CourseSummary[] | null>(null);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function CourseGrid() {
         data-testid="marketplace-empty-state"
         className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500"
       >
-        Nenhum curso disponível no momento.
+        {dict.marketplace.emptyState}
       </p>
     );
   }

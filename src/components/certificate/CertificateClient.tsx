@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import CertificateView from "@/components/certificate/CertificateView";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type CertificateData = {
   userName: string;
@@ -11,6 +12,7 @@ type CertificateData = {
 };
 
 export default function CertificateClient({ enrollmentId }: { enrollmentId: string }) {
+  const { dict } = useI18n();
   const [data, setData] = useState<CertificateData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +22,7 @@ export default function CertificateClient({ enrollmentId }: { enrollmentId: stri
       if (cancelled) return;
       const json = await res.json();
       if (!res.ok) {
-        setError(json?.message ?? "Certificado não disponível.");
+        setError(json?.message ?? dict.certificate.errorFallback);
         return;
       }
       setData(json);
@@ -28,14 +30,14 @@ export default function CertificateClient({ enrollmentId }: { enrollmentId: stri
     return () => {
       cancelled = true;
     };
-  }, [enrollmentId]);
+  }, [enrollmentId, dict.certificate.errorFallback]);
 
   if (error) {
     return (
       <div data-testid="certificate-error-state" className="mx-auto max-w-2xl px-4 py-10 text-center">
         <p className="mb-4 text-gray-600">{error}</p>
         <Link href="/dashboard" data-testid="certificate-back-to-dashboard-link" className="font-medium text-indigo-600 hover:underline">
-          Voltar ao Dashboard
+          {dict.certificate.backToDashboard}
         </Link>
       </div>
     );
@@ -44,7 +46,7 @@ export default function CertificateClient({ enrollmentId }: { enrollmentId: stri
   if (!data) {
     return (
       <p data-testid="certificate-loading" className="mx-auto max-w-2xl px-4 py-10 text-center text-gray-500">
-        Carregando certificado...
+        {dict.certificate.loading}
       </p>
     );
   }

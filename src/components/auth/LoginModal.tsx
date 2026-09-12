@@ -5,6 +5,7 @@ import Modal from "@/components/ui/Modal";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 import type { AuthUser } from "@/components/auth/AuthContext";
+import { useI18n } from "@/i18n/LanguageProvider";
 
 type LoginModalProps = {
   open: boolean;
@@ -19,6 +20,8 @@ export default function LoginModal({
   onSuccess,
   onSwitchToSignup,
 }: LoginModalProps) {
+  const { dict } = useI18n();
+  const t = dict.auth.login;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,7 @@ export default function LoginModal({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data?.message ?? "Não foi possível entrar.");
+        setError(data?.message ?? t.errorFallback);
         return;
       }
 
@@ -46,23 +49,23 @@ export default function LoginModal({
       setPassword("");
       onSuccess(data.user);
     } catch {
-      setError("Erro de rede. Tente novamente.");
+      setError(dict.common.networkError);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Entrar" testId="login-modal">
+    <Modal open={open} onClose={onClose} title={t.title} testId="login-modal">
       <p
         data-testid="login-professor-credentials-hint"
         className="mb-4 rounded-md bg-indigo-50 px-3 py-2 text-xs text-indigo-700"
       >
-        Conta de professor: <strong>professor@admin.com</strong> / <strong>admin</strong>
+        {t.professorHintPrefix} <strong>professor@admin.com</strong> / <strong>admin</strong>
       </p>
       <form onSubmit={handleSubmit} data-testid="login-form">
         <FormField
-          label="Email"
+          label={t.emailLabel}
           name="email"
           type="email"
           testId="login-email-input"
@@ -71,7 +74,7 @@ export default function LoginModal({
           required
         />
         <FormField
-          label="Senha"
+          label={t.passwordLabel}
           name="password"
           type="password"
           testId="login-password-input"
@@ -94,17 +97,17 @@ export default function LoginModal({
           disabled={isSubmitting}
           className="w-full"
         >
-          {isSubmitting ? "Entrando..." : "Entrar"}
+          {isSubmitting ? t.submitting : t.submit}
         </Button>
         <p className="mt-4 text-center text-sm text-gray-500">
-          Não tem conta?{" "}
+          {t.noAccount}{" "}
           <button
             type="button"
             data-testid="login-switch-to-signup-button"
             className="font-semibold text-indigo-600 hover:underline"
             onClick={onSwitchToSignup}
           >
-            Cadastre-se
+            {t.signupLink}
           </button>
         </p>
       </form>
