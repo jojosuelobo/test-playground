@@ -66,3 +66,24 @@ Cypress.Commands.add('fillSignupForm', (name, email, password) => {
     cy.get('[data-testid="signup-password-input"]').type(password)
     cy.get('[data-testid="signup-submit-button"]').click()
 })
+
+// The three commands below stand in for "page objects": each one owns the
+// interactions for a single screen in the enroll -> complete -> certificate flow.
+
+Cypress.Commands.add('enrollInCurrentCourse', () => {
+    cy.intercept('POST', '/api/enrollments').as('enroll')
+    cy.get('[data-testid="enroll-button"]').click()
+    cy.wait('@enroll')
+    cy.get('[data-testid="enrollment-dashboard-link"]').click()
+})
+
+Cypress.Commands.add('openFirstEnrolledCourse', () => {
+    cy.get('[data-testid^="enrolled-course-list-item-"]').first().click()
+})
+
+Cypress.Commands.add('completeCourseAndViewCertificate', () => {
+    cy.intercept('PATCH', '/api/enrollments/*/complete').as('complete')
+    cy.get('[data-testid="complete-course-button"]').click()
+    cy.wait('@complete')
+    cy.get('[data-testid="certificate-button"]').click()
+})

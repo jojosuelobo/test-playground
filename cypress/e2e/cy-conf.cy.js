@@ -155,3 +155,82 @@ describe('Flaky Tests', () => {
         cy.get('[data-testid="flaky-banner"]').should('exist')
     })
 })
+
+describe('Page Objects', () => {
+    let courseId
+
+    before(() => {
+        cy.request('GET', '/api/courses').then((response) => {
+            const course = response.body.courses.find((c) => c.slug === 'java-fundamentals')
+            expect(course, `course with slug "java-fundamentals"`).to.exist
+            courseId = course.id
+        })
+    })
+
+    describe('Bad - no modularization', () => {
+        it('enrolls, completes the course and views the certificate', () => {
+            const name = faker.person.firstName()
+            const email = faker.internet.email()
+            const password = faker.internet.password({ length: 10 })
+            cy.request('POST', '/api/auth/signup', { name, email, password, phone: '' })
+
+            cy.visit(`/course/${courseId}`)
+
+            cy.intercept('POST', '/api/enrollments').as('enroll')
+            cy.get('[data-testid="enroll-button"]').click()
+            cy.wait('@enroll')
+            cy.get('[data-testid="enrollment-dashboard-link"]').click()
+
+            cy.get('[data-testid^="enrolled-course-list-item-"]').first().click()
+
+            cy.intercept('PATCH', '/api/enrollments/*/complete').as('complete')
+            cy.get('[data-testid="complete-course-button"]').click()
+            cy.wait('@complete')
+            cy.get('[data-testid="certificate-button"]').click()
+
+            cy.contains('Certificado de Conclusão').should('be.visible')
+        })
+    })
+
+    describe('Good - custom commands', () => {
+        beforeEach(() => {
+            cy.createStudentUser()
+            cy.visit(`/course/${courseId}`)
+        })
+
+        it('enrolls, completes the course and views the certificate', () => {
+            cy.enrollInCurrentCourse()
+            cy.openFirstEnrolledCourse()
+            cy.completeCourseAndViewCertificate()
+
+            cy.contains('Certificado de Conclusão').should('be.visible')
+        })
+    })
+
+    describe('Great - custom commands + before/beforeEach/after (with cleanup)', () => {
+        before(() => {
+            // Runs once for this block, not per test: creating the user doesn't need
+            // to happen again for every `it` that reuses it.
+            cy.createStudentUser()
+        })
+
+        beforeEach(() => {
+            // Runs before every test: always start from a clean, known page.
+            cy.visit(`/course/${courseId}`)
+        })
+
+        after(() => {
+            // Runs once after this block, even if the test above fails - deletes the
+            // user created in `before` so the spec doesn't leave data behind.
+            cy.request('DELETE', '/api/auth/me')
+        })
+
+        it('enrolls, completes the course and views the certificate', () => {
+            cy.enrollInCurrentCourse()
+            cy.openFirstEnrolledCourse()
+            cy.completeCourseAndViewCertificate()
+
+            cy.contains('Certificado de Conclusão').should('be.visible')
+        })
+    })
+})
