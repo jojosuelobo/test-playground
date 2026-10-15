@@ -1,8 +1,6 @@
 /// <reference types="cypress" />
 import { faker } from '@faker-js/faker';
 
-// More appropriate: the user is created through the API (cy.request), without going through the UI.
-// The session cookie set by the signup response is kept by Cypress for the rest of the test.
 describe('Setup via API (cy.request)', () => {
     let courseId
     let user

@@ -1,9 +1,6 @@
 /// <reference types="cypress" />
 import { faker } from '@faker-js/faker';
 
-// Fastest: the user is inserted directly in the database with a SQL query (cy.task -> pg).
-// Needs the app running locally with access to its database, e.g.:
-// CYPRESS_BASE_URL=http://localhost:3000 npx cypress run --spec cypress/e2e/a3-setup-via-db.cy.js
 describe('Setup via database (SQL)', () => {
     let courseId
     let user
@@ -18,8 +15,7 @@ describe('Setup via database (SQL)', () => {
     beforeEach(() => {
         user = {
             name: faker.person.firstName(),
-            // Fixed domain so leftover test users are easy to find and delete
-            email: faker.internet.email({ provider: 'e2e.test' }),
+            email: faker.internet.email(),
             password: faker.internet.password({ length: 10 }),
         }
 
@@ -30,13 +26,15 @@ describe('Setup via database (SQL)', () => {
             })
         })
 
-        // Logging in over the API only to get the session cookie
+        // Log in por conta de session cookie
         cy.request('POST', '/api/auth/login', { email: user.email, password: user.password })
     })
 
-    // afterEach(() => {
-    //     cy.task('db:query', { sql: 'DELETE FROM "User" WHERE email = $1', params: [user.email] })
-    // })
+    /*
+    afterEach(() => {
+        cy.task('db:query', { sql: 'DELETE FROM "User" WHERE email = $1', params: [user.email] })
+    })
+    */
 
     it('shows the empty state on the dashboard', () => {
         cy.visit('/dashboard')

@@ -1,8 +1,6 @@
 /// <reference types="cypress" />
 import { faker } from '@faker-js/faker';
 
-// Least appropriate: the setup depends on the signup UI, which is unrelated to what these tests verify.
-// If the signup form breaks, every test below fails for the wrong reason (and the signup is slow).
 describe('Setup via GUI', () => {
     let courseId
     let user
@@ -29,10 +27,6 @@ describe('Setup via GUI', () => {
         cy.get('[data-testid="signup-password-input"]').type(user.password)
         cy.get('[data-testid="signup-submit-button"]').click()
         cy.contains('My Dashboard', { timeout: 15000 }).should('be.visible')
-    })
-
-    afterEach(() => {
-        cy.request('DELETE', '/api/auth/me')
     })
 
     it('shows the empty state on the dashboard', () => {
