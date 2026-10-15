@@ -18,7 +18,8 @@ describe('Setup via database (SQL)', () => {
     beforeEach(() => {
         user = {
             name: faker.person.firstName(),
-            email: faker.internet.email(),
+            // Fixed domain so leftover test users are easy to find and delete
+            email: faker.internet.email({ provider: 'e2e.test' }),
             password: faker.internet.password({ length: 10 }),
         }
 
@@ -33,9 +34,9 @@ describe('Setup via database (SQL)', () => {
         cy.request('POST', '/api/auth/login', { email: user.email, password: user.password })
     })
 
-    afterEach(() => {
-        cy.task('db:query', { sql: 'DELETE FROM "User" WHERE email = $1', params: [user.email] })
-    })
+    // afterEach(() => {
+    //     cy.task('db:query', { sql: 'DELETE FROM "User" WHERE email = $1', params: [user.email] })
+    // })
 
     it('shows the empty state on the dashboard', () => {
         cy.visit('/dashboard')
